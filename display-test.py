@@ -1,11 +1,21 @@
+"""
+This file is a quick use hacky file for rapid testing of image work.
+Additionally, new functions are like to be tested here first
+"""
+
 import time
 from inky import InkyPHAT
 from PIL import Image, ImageDraw
 
-inky_display = InkyPHAT('yellow')
+"""
+Turns out if you have red in an image, but the display is set to black, it'll display as gray.
+This will be convenient for quickly testing code that dynamically displays sprites on the screen
+A 2 second refresh time allows for more rapid testing than a 15 second refresh time
+"""
+inky_display = InkyPHAT('black')
 inky_display.set_border(inky_display.BLACK)
 
-img = Image.open('dex-mockup.png')
+img = Image.open('johto-test.png')
 
 def entry_split(entry):
     words = entry.split(' ')
