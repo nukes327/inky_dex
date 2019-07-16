@@ -40,18 +40,18 @@ def entry_split(entry, line_split = 17, num_lines = 7):
             line_strings[line_index] += words[i][:split_index] + '-'
             line_index += 1
             line_strings[line_index] += words[i][split_index:] + ' '
-    
+
     return line_strings
 
 def char_display(x, y, character, char_width = 8, char_height = 8):
-    sheet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ():;[]abcdefghijklmnopqrstuvwxyz      AOUaou          dlmrstv         'PM-  ?!.&e >>VM$*./,F0123456789"
+    sheet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ():;[]abcdefghijklmnopqrstuvwxyz      ÄÖÜäöü          dlmrstv         '①②-  ?!.&é ▷▶▼♂$×./,♀0123456789"
     sheet_x = (sheet.index(character) % 16) * char_width
     sheet_y = (int(sheet.index(character) / 16)) * char_height
 
     char_sprite = font.crop((sheet_x, sheet_y, sheet_x + char_width, sheet_y + char_height))
     img.paste(char_sprite, (x, y))
 
-def line_display(x, y, line, char_width = 8, char_height = 8): 
+def line_display(x, y, line, char_width = 8, char_height = 8):
     for character, index in zip(line, range(len(line))):
         char_display(x + char_width * index, y, character, char_width, char_height)
 
@@ -64,7 +64,7 @@ def entry_display(entry, char_width = 8, char_height = 8, line_gap = 4):
 
 def dex_data_display(number, height, weight, species, classification):
     line_display(45, 69, '{0:03d}'.format(number))
-    
+
     char_display(47, 81, '.')
     line_display(33, 81, '{: >2s}'.format(str(height).split('.')[0]))
     line_display(52, 81, str(height).split('.')[1])
@@ -74,7 +74,7 @@ def dex_data_display(number, height, weight, species, classification):
     line_display(46, 93, str(weight).split('.')[1])
 
     line_display(71, 1, species)
-    line_display(71, 12, classification)
+    line_display(71, 12, classification + '①②')
 
     sprite_display(7, 7, number)
 
