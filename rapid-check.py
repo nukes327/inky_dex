@@ -1,3 +1,6 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
 """
 This file is for quick back-to-back sprite checks, 1 second display each before moving on
 Modify the numbers in modified_list to the changed/new sprites

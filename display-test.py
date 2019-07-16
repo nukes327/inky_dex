@@ -1,3 +1,6 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
 """
 This file is a quick use hacky file for rapid testing of image work.
 Additionally, new functions are like to be tested here first
@@ -41,7 +44,7 @@ def entry_split(entry, line_split = 17, num_lines = 7):
     return line_strings
 
 def char_display(x, y, character, char_width = 8, char_height = 8):
-    sheet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ():;[]abcdefghijklmnopqrstuvwxyz      AOUaou          dlmrstv         'PM-  ?!.&e >>VMPx./,F0123456789"
+    sheet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ():;[]abcdefghijklmnopqrstuvwxyz      AOUaou          dlmrstv         'PM-  ?!.&e >>VM$*./,F0123456789"
     sheet_x = (sheet.index(character) % 16) * char_width
     sheet_y = (int(sheet.index(character) / 16)) * char_height
 
