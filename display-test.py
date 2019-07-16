@@ -21,6 +21,9 @@ inky_display.set_border(inky_display.BLACK)
 img = Image.open('dex-background.png')
 font = Image.open('gscfont.png')
 
+def gsc_format(entry):
+    return entry.replace("'d", 'ⓓ').replace("'l", 'ⓛ').replace("'m", 'ⓜ').replace("'r", 'ⓡ').replace("'s", 'ⓢ').replace("'t", 'ⓣ').replace("'v", 'ⓥ')
+
 def entry_split(entry, line_split = 17, num_lines = 7):
     words = entry.split(' ')
     line_index = 0
@@ -44,7 +47,7 @@ def entry_split(entry, line_split = 17, num_lines = 7):
     return line_strings
 
 def char_display(x, y, character, char_width = 8, char_height = 8):
-    sheet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ():;[]abcdefghijklmnopqrstuvwxyz      ÄÖÜäöü          ⒹⓁⓂⓇⓈⓉⓋ         '①②-  ?!.&é ▷▶▼♂$×./,♀0123456789"
+    sheet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ():;[]abcdefghijklmnopqrstuvwxyz      ÄÖÜäöü          ⓓⓛⓜⓡⓢⓣⓥ         '①②-  ?!.&é ▷▶▼♂$×./,♀0123456789"
     sheet_x = (sheet.index(character) % 16) * char_width
     sheet_y = (int(sheet.index(character) / 16)) * char_height
 
@@ -60,7 +63,7 @@ def lines_display(x, y, lines, char_width = 8, char_height = 8, line_gap = 4):
         line_display(x, y + index * (char_height + line_gap), line, char_width, char_height)
 
 def entry_display(entry, char_width = 8, char_height = 8, line_gap = 4):
-    lines_display(71, 23, entry)
+    lines_display(71, 23, entry_split(gsc_format(entry)))
 
 def dex_data_display(number, height, weight, species, classification):
     line_display(45, 69, '{0:03d}'.format(number))
@@ -92,7 +95,7 @@ def footprint_display(x, y, number):
     img.paste(footprint, (x, y))
 
 
-entry_display(entry_split("For no reason, it jumps and splashes about, making it easy for predators like Pidgeotto to catch it mid-jump."))
+entry_display("For no reason, it jumps and splashes about, making it easy for predators like Pidgeotto to catch it mid-jump.")
 dex_data_display(129, 0.9, 10.0, 'MAGIKARP', 'FISH')
 
 inky_display.set_image(img)
