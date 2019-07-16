@@ -27,6 +27,3 @@ for i in modified_list:
         inky_display.set_image(img)
         inky_display.show()
         time.sleep(1)
-
-inky_display.set_image(img)
-inky_display.show()
