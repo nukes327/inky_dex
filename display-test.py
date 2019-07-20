@@ -6,6 +6,8 @@ This file is a quick use hacky file for rapid testing of image work.
 Additionally, new functions are like to be tested here first
 """
 
+import configparser
+import os
 import time
 from inky import InkyPHAT
 from PIL import Image, ImageDraw
@@ -15,11 +17,32 @@ Turns out if you have red in an image, but the display is set to black, it'll di
 This will be convenient for quickly testing code that dynamically displays sprites on the screen
 A 2 second refresh time allows for more rapid testing than a 15 second refresh time
 """
-inky_display = InkyPHAT('yellow')
+
+if not os.path.isfile('dex.ini'):
+    print('No config found, generating an empty one')
+    init_config()
+    exit()
+
+with open('dex.ini') as conffile:
+    if conffile['DEFAULT']['type'] is 'what':
+        inky_display = InkyWHAT(conffile['DEFAULT']['color'])
+    else if conffile['DEFAULT']['type'] is 'phat':
+        inky_display = InkyPHAT(conffile['DEFAULT']['color'])
+    else:
+        print("Valid types are 'what' and 'phat'")
+        exit()
 inky_display.set_border(inky_display.BLACK)
 
 img = Image.open('dex-background.png')
 font = Image.open('gscfont.png')
+
+def init_config():
+    config = configparser.ConfigParser()
+    config['DEFAULT'] = {
+            'type': '',
+            'color': ''}
+    with open('dex.ini', 'w+') as conffile:
+        config.write(conffile)
 
 def gsc_format(entry):
     return entry.replace("'d", 'ⓓ').replace("'l", 'ⓛ').replace("'m", 'ⓜ').replace("'r", 'ⓡ').replace("'s", 'ⓢ').replace("'t", 'ⓣ').replace("'v", 'ⓥ')
@@ -98,5 +121,6 @@ def footprint_display(x, y, number):
 entry_display("For no reason, it jumps and splashes about, making it easy for predators like Pidgeotto to catch it mid-jump.")
 dex_data_display(129, 0.9, 10.0, 'MAGIKARP', 'FISH')
 
+img = img.rotate(180)
 inky_display.set_image(img)
 inky_display.show()
