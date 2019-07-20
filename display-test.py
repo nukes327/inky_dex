@@ -18,24 +18,6 @@ This will be convenient for quickly testing code that dynamically displays sprit
 A 2 second refresh time allows for more rapid testing than a 15 second refresh time
 """
 
-if not os.path.isfile('dex.ini'):
-    print('No config found, generating an empty one')
-    init_config()
-    exit()
-
-with open('dex.ini') as conffile:
-    if conffile['DEFAULT']['type'] is 'what':
-        inky_display = InkyWHAT(conffile['DEFAULT']['color'])
-    else if conffile['DEFAULT']['type'] is 'phat':
-        inky_display = InkyPHAT(conffile['DEFAULT']['color'])
-    else:
-        print("Valid types are 'what' and 'phat'")
-        exit()
-inky_display.set_border(inky_display.BLACK)
-
-img = Image.open('dex-background.png')
-font = Image.open('gscfont.png')
-
 def init_config():
     config = configparser.ConfigParser()
     config['DEFAULT'] = {
@@ -43,6 +25,30 @@ def init_config():
             'color': ''}
     with open('dex.ini', 'w+') as conffile:
         config.write(conffile)
+
+if not os.path.isfile('dex.ini'):
+    print('No config found, generating an empty one')
+    init_config()
+    exit()
+
+dex_config = configparser.ConfigParser()
+
+with open('dex.ini') as conffile:
+    dex_config.read_file(conffile)
+
+if dex_config['DEFAULT']['type'] == 'what':
+    inky_display = InkyWHAT(dex_config['DEFAULT']['color'])
+elif dex_config['DEFAULT']['type'] == 'phat':
+    inky_display = InkyPHAT(dex_config['DEFAULT']['color'])
+else:
+    print("Valid types are 'what' and 'phat'")
+    exit()
+
+inky_display.set_border(inky_display.BLACK)
+
+img = Image.open('dex-background.png')
+font = Image.open('gscfont.png')
+
 
 def gsc_format(entry):
     return entry.replace("'d", 'ⓓ').replace("'l", 'ⓛ').replace("'m", 'ⓜ').replace("'r", 'ⓡ').replace("'s", 'ⓢ').replace("'t", 'ⓣ').replace("'v", 'ⓥ')
