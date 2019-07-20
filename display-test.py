@@ -9,7 +9,7 @@ Additionally, new functions are like to be tested here first
 import configparser
 import os
 import time
-from inky import InkyPHAT
+#from inky import InkyPHAT, InkyWHAT
 from PIL import Image, ImageDraw
 
 """
@@ -37,8 +37,10 @@ with open('dex.ini') as conffile:
     dex_config.read_file(conffile)
 
 if dex_config['DEFAULT']['type'] == 'what':
+    from inky import InkyWHAT
     inky_display = InkyWHAT(dex_config['DEFAULT']['color'])
 elif dex_config['DEFAULT']['type'] == 'phat':
+    from inky import InkyPHAT
     inky_display = InkyPHAT(dex_config['DEFAULT']['color'])
 else:
     print("Valid types are 'what' and 'phat'")
