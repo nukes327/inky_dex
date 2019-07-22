@@ -48,9 +48,19 @@ else:
 
 inky_display.set_border(inky_display.BLACK)
 
-img = Image.open('dex-background.png')
+#img = Image.open('dex-background.png')
+img = Image.new("P", (inky_display.WIDTH, inky_display.HEIGHT))
 font = Image.open('gscfont.png')
 
+def create_mask(source, mask=(inky_display.WHITE, inky_display.BLACK, inky_display.RED)):
+    mask_image = Image.new("1", source.size)
+    w, h = source.size
+    for x in range(w):
+        for y in range(h):
+            p = source.getpixel((x, y))
+            if p in mask:
+                mask_image.putpixel((x, y), 255)
+    return mask_image
 
 def gsc_format(entry):
     return entry.replace("'d", 'ⓓ').replace("'l", 'ⓛ').replace("'m", 'ⓜ').replace("'r", 'ⓡ').replace("'s", 'ⓢ').replace("'t", 'ⓣ').replace("'v", 'ⓥ')
@@ -118,7 +128,7 @@ def dex_data_display(number, height, weight, species, classification):
 def sprite_display(x, y, number, form = 0, version = 1):
     sprite_sheet = Image.open('sprites/{:03d}.png'.format(number))
     sprite = sprite_sheet.crop((0, 56 * version, 55, 55 + 56 * version))
-    img.paste(sprite, (x, y))
+    img.paste(sprite, (x, y), create_mask(sprite))
 
 def footprint_display(x, y, number):
     sprite_sheet = Image.open('sprites/{:03d}.png'.format(number))
