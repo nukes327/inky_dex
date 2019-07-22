@@ -88,7 +88,7 @@ def entry_split(entry, line_split = 17, num_lines = 7):
     return line_strings
 
 def char_display(x, y, character, char_width = 8, char_height = 8):
-    sheet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ():;[]abcdefghijklmnopqrstuvwxyz      ÄÖÜäöü          ⓓⓛⓜⓡⓢⓣⓥ         '①②-  ?!.&é ▷▶▼♂$×./,♀0123456789"
+    sheet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ():;[]abcdefghijklmnopqrstuvwxyz      ÄÖÜäöü          ⓓⓛⓜⓡⓢⓣⓥ       ⓃⓄ'①②-  ?!.&é ▷▶▼♂$×./,♀0123456789"
     sheet_x = (sheet.index(character) % 16) * char_width
     sheet_y = (int(sheet.index(character) / 16)) * char_height
 

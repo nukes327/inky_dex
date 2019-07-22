@@ -23,7 +23,7 @@ for i in modified_list:
         sprite = Image.open('sprites/{0:03d}-2s.png'.format(i))
     except IOError:
         continue
-    
+
     if sprite is not None:
         print('Current sprite is {0:03d}-2s.png'.format(i))
         img.paste(sprite, (7, 7))
