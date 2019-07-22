@@ -50,6 +50,7 @@ inky_display.set_border(inky_display.BLACK)
 
 #img = Image.open('dex-background.png')
 img = Image.new("P", (inky_display.WIDTH, inky_display.HEIGHT))
+draw = ImageDraw.Draw(img)
 font = Image.open('gscfont.png')
 
 def create_mask(source, mask=(inky_display.WHITE, inky_display.BLACK, inky_display.RED)):
@@ -104,31 +105,47 @@ def lines_display(x, y, lines, char_width = 8, char_height = 8, line_gap = 4):
         line_display(x, y + index * (char_height + line_gap), line, char_width, char_height)
 
 def entry_display(entry, char_width = 8, char_height = 8, line_gap = 4):
-    lines_display(71, 23, entry_split(gsc_format(entry)))
+    line_length = int((inky_display.WIDTH-71)/8)
+    line_count = int((inky_display.HEIGHT-23)/12)
+    line_count += int(((inky_display.HEIGHT-23)-(12*line_count))/8)
+    lines_display(71, 23, entry_split(gsc_format(entry), line_length, line_count))
 
 def dex_data_display(number, height, weight, species, classification):
+    line_display(2, 69, 'ⓃⓄ')
     line_display(45, 69, '{0:03d}'.format(number))
+    draw.line((2, 77, 67, 77), 2)
 
+    line_display(2, 81, 'HT')
+    char_display(61, 81, 'm')
     char_display(47, 81, '.')
     line_display(33, 81, '{: >2s}'.format(str(height).split('.')[0]))
     line_display(52, 81, str(height).split('.')[1])
+    draw.line((2, 89, 67, 89), 2)
 
+    line_display(2, 93, 'WT')
+    char_display(54, 93, 'k')
+    char_display(61, 93, 'g')
     char_display(41, 93, '.')
     line_display(19, 93, '{: >3s}'.format(str(weight).split('.')[0]))
     line_display(46, 93, str(weight).split('.')[1])
+    draw.line((2, 101, 67, 101), 2)
 
     line_display(71, 1, species)
+    draw.line((71, 9, inky_display.WIDTH - 20, 9), 2)
     line_display(71, 12, classification + '①②')
+    draw.line((71, 20, inky_display.WIDTH - 20, 20), 2) 
 
-    sprite_display(7, 7, number)
+    sprite_display(1, 1, number)
 
-    footprint_display(195, 1, number)
+    footprint_display(inky_display.WIDTH - 17, 1, number)
 
 
 def sprite_display(x, y, number, form = 0, version = 1):
+    box = Image.open('spritebox.png')
     sprite_sheet = Image.open('sprites/{:03d}.png'.format(number))
     sprite = sprite_sheet.crop((0, 56 * version, 55, 55 + 56 * version))
-    img.paste(sprite, (x, y), create_mask(sprite))
+    img.paste(box, (x, y), create_mask(box))
+    img.paste(sprite, (x + 6, y + 6), create_mask(sprite))
 
 def footprint_display(x, y, number):
     sprite_sheet = Image.open('sprites/{:03d}.png'.format(number))
