@@ -143,13 +143,13 @@ def dex_data_display(number, height, weight, species, classification):
 def sprite_display(x, y, number, form = 0, version = 1):
     box = Image.open('spritebox.png')
     sprite_sheet = Image.open('sprites/{:03d}.png'.format(number))
-    sprite = sprite_sheet.crop((0, 56 * version, 55, 55 + 56 * version))
+    sprite = sprite_sheet.crop((0, 56 * version, 56, 56 + 56 * version))
     img.paste(box, (x, y), create_mask(box))
     img.paste(sprite, (x + 6, y + 6), create_mask(sprite))
 
 def footprint_display(x, y, number):
     sprite_sheet = Image.open('sprites/{:03d}.png'.format(number))
-    footprint = sprite_sheet.crop((0, 112, 15, 127))
+    footprint = sprite_sheet.crop((0, 112, 16, 128))
     img.paste(footprint, (x, y))
 
 
