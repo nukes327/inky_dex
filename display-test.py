@@ -140,7 +140,7 @@ def dex_data_display(number, height, weight, species, classification):
     footprint_display(inky_display.WIDTH - 17, 1, number)
 
 
-def sprite_display(x, y, number, form = 0, version = 1):
+def sprite_display(x, y, number, form = 0, version = 0):
     box = Image.open('spritebox.png')
     sprite_sheet = Image.open('sprites/{:03d}.png'.format(number))
     sprite = sprite_sheet.crop((0, 56 * version, 56, 56 + 56 * version))
