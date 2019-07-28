@@ -51,7 +51,7 @@ inky_display.set_border(inky_display.BLACK)
 #img = Image.open('dex-background.png')
 img = Image.new("P", (inky_display.WIDTH, inky_display.HEIGHT))
 draw = ImageDraw.Draw(img)
-font = Image.open('gscfont.png')
+font = Image.open('unowngscfont.png')
 
 def create_mask(source, mask=(inky_display.WHITE, inky_display.BLACK, inky_display.RED)):
     mask_image = Image.new("1", source.size)
@@ -94,7 +94,7 @@ def char_display(x, y, character, char_width = 8, char_height = 8):
     sheet_y = (int(sheet.index(character) / 16)) * char_height
 
     char_sprite = font.crop((sheet_x, sheet_y, sheet_x + char_width, sheet_y + char_height))
-    img.paste(char_sprite, (x, y))
+    img.paste(char_sprite, (x, y), create_mask(char_sprite))
 
 def line_display(x, y, line, char_width = 8, char_height = 8):
     for character, index in zip(line, range(len(line))):
