@@ -109,10 +109,11 @@ def lines_display(x, y, lines, char_width = 8, char_height = 8, line_gap = 4):
         line_display(x, y + index * (char_height + line_gap), line, char_width, char_height)
 
 def entry_display(entry, char_width = 8, char_height = 8, line_gap = 4):
-    line_length = int((inky_display.WIDTH-71)/8)
-    line_count = int((inky_display.HEIGHT-23)/12)
-    line_count += int(((inky_display.HEIGHT-23)-(12*line_count))/8)
-    lines_display(71, 23, entry_split(gsc_format(entry), line_length, line_count))
+    sc = dex_config.getint('DEFAULT', 'sprite_scale')
+    line_length = int((inky_display.WIDTH - 71 * sc) / char_width)
+    line_count = int((inky_display.HEIGHT - 2 * char_height - 7) / (char_height + line_gap))
+    line_count += int(((inky_display.HEIGHT - 2 * char_height - 7) - ((char_height + line_gap) * line_count)) / char_height)
+    lines_display(71 * sc, 2 * char_height + 7, entry_split(gsc_format(entry), line_length, line_count), char_width, char_height, line_gap)
 
 def dex_data_display(number, height, weight, species, classification):
     cw = dex_config.getint('DEFAULT', 'char_width')
@@ -122,7 +123,7 @@ def dex_data_display(number, height, weight, species, classification):
     # Pokemon number section
     line_display(2, 69 * sc, 'ⓃⓄ', cw, ch) # "NO."
     line_display((69 * sc) - (3 * cw), 69 * sc, '{0:03d}'.format(number), cw, ch) # Right align 3 digit number
-    draw.line((2, 69 * sc + ch, 67 * sc, 69 + ch), 2) # Line beneath number with a 1 pixel gap
+    draw.line((2, 69 * sc + ch, 69 * sc - 2, 69 * sc + ch), 2) # Line beneath number with a 1 pixel gap
 
 
     # Pokemon height section
@@ -131,7 +132,7 @@ def dex_data_display(number, height, weight, species, classification):
     char_display(int(69 * sc - 2.75 * cw), 69 * sc + ch + 4, '.', cw, ch) # Decimal kerning hack
     line_display(int(69 * sc - 4.5 * cw), 69 * sc + ch + 4, '{: >2s}'.format(str(height).split('.')[0]), cw, ch)
     line_display(int(69 * sc - 2.125 * cw), 69 * sc + ch + 4, str(height).split('.')[1], cw, ch)
-    draw.line((2, 69 * sc + 2 * ch + 4, 67 * sc, 69 * sc + 2 * ch + 4), 2)
+    draw.line((2, 69 * sc + 2 * ch + 4, 69 * sc - 2, 69 * sc + 2 * ch + 4), 2)
 
 
     #Pokemon weight section
@@ -141,7 +142,7 @@ def dex_data_display(number, height, weight, species, classification):
     char_display(int(69 * sc - 3.5 * cw), 69 * sc + 2 * (ch + 4), '.', cw, ch) # Decimal kerning hack
     line_display(int(69 * sc - 6.25 * cw), 69 * sc + 2 * (ch + 4), '{: >3s}'.format(str(weight).split('.')[0]), cw, ch)
     line_display(int(69 * sc - 2.875 * cw), 69 * sc + 2 * (ch + 4), str(weight).split('.')[1], cw, ch)
-    draw.line((2, 69 * sc + 2 * (ch + 4) + ch, 67 * sc, 69 * sc + 2 * (ch + 4) + ch), 2)
+    draw.line((2, 69 * sc + 2 * (ch + 4) + ch, 69 * sc - 2, 69 * sc + 2 * (ch + 4) + ch), 2)
 
 
     #Pokemon species and classification
@@ -171,7 +172,8 @@ def footprint_display(x, y, number, scale = 1):
     img.paste(footprint, (x, y))
 
 
-entry_display("For no reason, it jumps and splashes about, making it easy for predators like Pidgeotto to catch it mid-jump.")
+entry_display("For no reason, it jumps and splashes about, making it easy for predators like Pidgeotto to catch it mid-jump.",
+        dex_config.getint('DEFAULT', 'char_width'), dex_config.getint('DEFAULT', 'char_height'))
 dex_data_display(129, 0.9, 10.0, 'MAGIKARP', 'FISH')
 
 img = img.rotate(180)
