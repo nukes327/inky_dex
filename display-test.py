@@ -23,7 +23,10 @@ def init_config():
     config['DEFAULT'] = {
             'type': '',
             'color': '',
-            'font': 'gscfont.png'}
+            'font': 'gscfont.png',
+            'char_width': 8,
+            'char_height': 8,
+            'sprite_scale': 1}
     with open('dex.ini', 'w+') as conffile:
         config.write(conffile)
 
@@ -112,45 +115,59 @@ def entry_display(entry, char_width = 8, char_height = 8, line_gap = 4):
     lines_display(71, 23, entry_split(gsc_format(entry), line_length, line_count))
 
 def dex_data_display(number, height, weight, species, classification):
-    line_display(2, 69, 'ⓃⓄ')
-    line_display(45, 69, '{0:03d}'.format(number))
-    draw.line((2, 77, 67, 77), 2)
+    cw = dex_config.getint('DEFAULT', 'char_width')
+    ch = dex_config.getint('DEFAULT', 'char_height')
+    sc = dex_config.getint('DEFAULT', 'sprite_scale')
 
-    line_display(2, 81, 'HT')
-    char_display(61, 81, 'm')
-    char_display(47, 81, '.')
-    line_display(33, 81, '{: >2s}'.format(str(height).split('.')[0]))
-    line_display(52, 81, str(height).split('.')[1])
-    draw.line((2, 89, 67, 89), 2)
-
-    line_display(2, 93, 'WT')
-    char_display(54, 93, 'k')
-    char_display(61, 93, 'g')
-    char_display(41, 93, '.')
-    line_display(19, 93, '{: >3s}'.format(str(weight).split('.')[0]))
-    line_display(46, 93, str(weight).split('.')[1])
-    draw.line((2, 101, 67, 101), 2)
-
-    line_display(71, 1, species)
-    draw.line((71, 9, inky_display.WIDTH - 20, 9), 2)
-    line_display(71, 12, classification + '①②')
-    draw.line((71, 20, inky_display.WIDTH - 20, 20), 2) 
-
-    sprite_display(1, 1, number)
-
-    footprint_display(inky_display.WIDTH - 17, 1, number)
+    # Pokemon number section
+    line_display(2, 69 * sc, 'ⓃⓄ', cw, ch) # "NO."
+    line_display((69 * sc) - (3 * cw), 69 * sc, '{0:03d}'.format(number), cw, ch) # Right align 3 digit number
+    draw.line((2, 69 * sc + ch, 67 * sc, 69 + ch), 2) # Line beneath number with a 1 pixel gap
 
 
-def sprite_display(x, y, number, form = 0, version = 0):
+    # Pokemon height section
+    line_display(2, 69 * sc + ch + 4, 'HT', cw, ch)
+    char_display(69 * sc - cw, 69 * sc + ch + 4, 'm', cw, ch)
+    char_display(int(69 * sc - 2.75 * cw), 69 * sc + ch + 4, '.', cw, ch) # Decimal kerning hack
+    line_display(int(69 * sc - 4.5 * cw), 69 * sc + ch + 4, '{: >2s}'.format(str(height).split('.')[0]), cw, ch)
+    line_display(int(69 * sc - 2.125 * cw), 69 * sc + ch + 4, str(height).split('.')[1], cw, ch)
+    draw.line((2, 69 * sc + 2 * ch + 4, 67 * sc, 69 * sc + 2 * ch + 4), 2)
+
+
+    #Pokemon weight section
+    line_display(2, 69 * sc + 2 * (ch + 4), 'WT', cw, ch)
+    char_display(69 * sc - 2 * cw + cw // 8, 69 * sc + 2 * (ch + 4), 'k', cw, ch)
+    char_display(69 * sc - cw, 69 * sc + 2 * (ch + 4), 'g', cw, ch) # kg kerning hack
+    char_display(int(69 * sc - 3.5 * cw), 69 * sc + 2 * (ch + 4), '.', cw, ch) # Decimal kerning hack
+    line_display(int(69 * sc - 6.25 * cw), 69 * sc + 2 * (ch + 4), '{: >3s}'.format(str(weight).split('.')[0]), cw, ch)
+    line_display(int(69 * sc - 2.875 * cw), 69 * sc + 2 * (ch + 4), str(weight).split('.')[1], cw, ch)
+    draw.line((2, 69 * sc + 2 * (ch + 4) + ch, 67 * sc, 69 * sc + 2 * (ch + 4) + ch), 2)
+
+
+    #Pokemon species and classification
+    line_display(71 * sc, 1, species, cw, ch)
+    draw.line((71 * sc, 1 + ch, inky_display.WIDTH - 20 * sc, 1 + ch), 2)
+    line_display(71 * sc, 4 + ch, classification + '①②', cw, ch)
+    draw.line((71 * sc, 4 + 2 * ch, inky_display.WIDTH - 20 * sc, 4 + 2 * ch), 2) 
+
+    sprite_display(1, 1, number, scale = sc)
+
+    footprint_display(inky_display.WIDTH - (sc * 16 + 1), 1, number, sc)
+
+
+def sprite_display(x, y, number, form = 0, version = 0, scale = 1):
     box = Image.open('spritebox.png')
+    box = box.resize((box.width * scale, box.height * scale))
     sprite_sheet = Image.open('sprites/{:03d}.png'.format(number))
     sprite = sprite_sheet.crop((0, 56 * version, 56, 56 + 56 * version))
+    sprite = sprite.resize((sprite.width * scale, sprite.height * scale))
     img.paste(box, (x, y), create_mask(box))
-    img.paste(sprite, (x + 6, y + 6), create_mask(sprite))
+    img.paste(sprite, (x + 6 * scale, y + 6 * scale), create_mask(sprite))
 
-def footprint_display(x, y, number):
+def footprint_display(x, y, number, scale = 1):
     sprite_sheet = Image.open('sprites/{:03d}.png'.format(number))
     footprint = sprite_sheet.crop((0, 112, 16, 128))
+    footprint = footprint.resize((footprint.width * scale, footprint.height * scale))
     img.paste(footprint, (x, y))
 
 
