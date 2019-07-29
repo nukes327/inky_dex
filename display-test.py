@@ -22,7 +22,8 @@ def init_config():
     config = configparser.ConfigParser()
     config['DEFAULT'] = {
             'type': '',
-            'color': ''}
+            'color': '',
+            'font': 'gscfont.png'}
     with open('dex.ini', 'w+') as conffile:
         config.write(conffile)
 
@@ -51,7 +52,7 @@ inky_display.set_border(inky_display.BLACK)
 #img = Image.open('dex-background.png')
 img = Image.new("P", (inky_display.WIDTH, inky_display.HEIGHT))
 draw = ImageDraw.Draw(img)
-font = Image.open('unowngscfont.png')
+font = Image.open(dex_config['DEFAULT']['font'])
 
 def create_mask(source, mask=(inky_display.WHITE, inky_display.BLACK, inky_display.RED)):
     mask_image = Image.new("1", source.size)
