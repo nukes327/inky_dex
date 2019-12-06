@@ -3,14 +3,14 @@
 
 """
 This file is a quick use hacky file for rapid testing of image work.
+Cleanliness is not godliness here.
 Additionally, new functions are like to be tested here first
 """
 
 import configparser
 import os
-import time
-#from inky import InkyPHAT, InkyWHAT
-from PIL import Image, ImageDraw
+from inky import InkyPHAT, InkyWHAT  # type: ignore
+from PIL import Image, ImageDraw  # type: ignore
 
 """
 Turns out if you have red in an image, but the display is set to black, it'll display as gray.
@@ -41,10 +41,8 @@ with open('dex.ini') as conffile:
     dex_config.read_file(conffile)
 
 if dex_config['DEFAULT']['type'] == 'what':
-    from inky import InkyWHAT
     inky_display = InkyWHAT(dex_config['DEFAULT']['color'])
 elif dex_config['DEFAULT']['type'] == 'phat':
-    from inky import InkyPHAT
     inky_display = InkyPHAT(dex_config['DEFAULT']['color'])
 else:
     print("Valid types are 'what' and 'phat'")
@@ -149,7 +147,7 @@ def dex_data_display(number, height, weight, species, classification):
     line_display(71 * sc, 1, species, cw, ch)
     draw.line((71 * sc, 1 + ch, inky_display.WIDTH - 20 * sc, 1 + ch), 2)
     line_display(71 * sc, 4 + ch, classification + '①②', cw, ch)
-    draw.line((71 * sc, 4 + 2 * ch, inky_display.WIDTH - 20 * sc, 4 + 2 * ch), 2) 
+    draw.line((71 * sc, 4 + 2 * ch, inky_display.WIDTH - 20 * sc, 4 + 2 * ch), 2)
 
     sprite_display(1, 1, number, scale = sc)
 
