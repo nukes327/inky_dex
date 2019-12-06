@@ -116,3 +116,31 @@ def entry_wrap(entry: str, line_length: int = 17, line_count: int = 7) -> List[s
             line_index += 1
             line_strings[line_index] += words[i][wrap_index:] + ' '
     return line_strings
+
+
+def gsc_format(entry: str) -> str:
+    """Replace character patterns with unique characters to work with gscfont.
+
+    Args:
+        entry: The entry to be formatted
+
+    Returns:
+        A string with character replacements performed
+
+    Notes:
+        The gscfont file contains special characters that exist as one of the following:
+            Combination character with apostrophe and character sharing same char slot
+            Symbol
+            Combined letters for special use
+
+        If using gscfont this replacement process should be done before wrapping the entry
+
+    Todo:
+        There may be a better way to handle this than using special characters, look in to it
+        Notate somewhere which special characters are used for what character on the sheet
+        Clean up replacements
+
+    """
+    partial = entry.replace("'d", 'ⓓ').replace("'l", 'ⓛ').replace("'m", 'ⓜ').replace("'r", 'ⓡ')
+    finished = partial.replace("'s", 'ⓢ').replace("'t", 'ⓣ').replace("'v", 'ⓥ')
+    return finished
