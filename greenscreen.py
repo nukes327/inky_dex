@@ -12,7 +12,7 @@ Notes:
     Any pixels that should be transparent are first painted green using
     the fourth color of the colormap.
 
-    Once the image is saved in the sprites directory this script can be run to clean
+    Once the image is saved in the assets directory this script can be run to clean
     any images of greenscreen, leaving behind transparency.
 
 """
@@ -24,3 +24,7 @@ import glob
 for sprite in glob.glob("assets/sprites/*.png"):
     img = Image.open(sprite)
     img.save(sprite, transparency=3, optimize=1)
+
+for ui_piece in glob.glob("assets/ui/*.png"):
+    img = Image.open(ui_piece)
+    img.save(ui_piece, transparency=3, optimize=1)
