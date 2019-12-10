@@ -11,7 +11,7 @@ Todo:
 """
 
 from typing import List, Tuple
-from PIL import Image  # type: ignore
+from PIL import Image, ImageDraw  # type: ignore
 
 
 def get_entry(id: int, gen: int, ver: int) -> str:
@@ -263,3 +263,125 @@ def display_lines(img: Image, font: Image, x: int, y: int, lines: List[str],
     """
     for line, index in zip(lines, range(len(lines))):
         display_line(img, font, x, y + index * (char_height + line_gap), line, char_width, char_height)
+
+
+def display_sprite(img: Image, x: int, y: int, id: int, gen: int, ver: int, form: int = 0) -> None:
+    """Paste sprite and bounding box into display image.
+
+    Args:
+        img:  The display image to be pasted into
+        x:    X coordinate to paste sprite
+        y:    Y coordinate to paste sprite
+        id:   Id of the pokemon sprite to paste
+        gen:  Generation to pull sprite from
+        ver:  Version within generation to pull sprite from
+        form: Choose form if pokemon has more than one
+
+    Notes:
+        X and Y coordinates are anchored to the top left of the bounding box
+        for the sprite, 0,0 is the top left of the display.
+
+    Todo:
+        Sprites are currently stored using sprites from gen 2, but without
+        an indicator by filename to indicate generation. I think the best
+        solution may be to make each sprite file a full sheet, with gen 1 left
+        aligned. This will require shifting all of the sprites over 56 pixels
+        as they are gen 2, but it would help expansion in the future if done now.
+
+    """
+    box = Image.open('assets/ui/spritebox.png')
+    sprite_sheet = Image.open('assets/sprites/{:03d}.png'.format(id))
+
+    # TODO: Put this next line in a try/except or get index errors for high gens
+    sprite = sprite_sheet.crop((0, 56 * ver, 56, 56 + 56 * ver))
+
+    img.paste(box, (x, y), create_mask(box))
+    img.paste(sprite, (x + 6, y + 6), create_mask(sprite))
+
+
+def display_footprint(img: Image, x: int, y: int, id: int) -> None:
+    """Paste footprint sprite into display image.
+
+    Args:
+        img: The display image to be pasted into
+        x:   X coordinate to paste footprint
+        y:   Y coordinate to paste footprint
+        id:  Id of the pokemon footprint to paste
+
+    Notes:
+        X and Y coordinates are anchored to the top left of the footprint
+        sprite area, 0,0 is the top left of the display.
+
+    """
+    sprite_sheet = Image.open('assets/sprites/{:03d}.png'.format(id))
+    footprint = sprite_sheet.crop((0, 112, 16, 128))
+    img.paste(footprint, (x, y), create_mask(footprint))
+
+
+def display_numeric(img: Image, font: Image, x: int, y: int, width: int, data: Tuple[int, float, float]) -> None:
+    """Paste numeric data into display image.
+
+    Args:
+        img:   Display image to be pasted into
+        font:  Fontsheet image
+        x:     X coordinate to paste data
+        y:     Y coordinate to paste data
+        width: How wide the section should be
+        data:  Numeric data to be pasted
+               Tuple with data in the following order:
+                 ID
+                 Height
+                 Weight
+
+    Notes:
+        X and Y coordinates are the top left of the ID line for numeric data
+        0,0 is the top left of the display
+        Too many digits in height or weight for given width may cause issues
+
+    Todo:
+        Still contains some magic numbers, should work on this
+        Width is wrong, right bound not width
+
+    """
+    draw = ImageDraw.Draw(img)
+    underline = 2
+    ly = y
+
+    # ID section
+    display_line(img, font, x, ly, 'ⓃⓄ')
+    display_line(img, font, width - (3 * 8), ly, '{0:03d}'.format(data[0]))
+    draw.line((x, ly + 8, width - 2, ly + 8), underline)
+
+    # Height section
+    ly += 8 + 4
+    display_line(img, font, x, ly, 'HT')
+    display_char(img, font, width - 8, ly, 'm')
+    display_char(img, font, int(width - 2.75 * 8), ly, '.')
+    display_line(img, font, int(width - 4.5 * 8), ly, '{: >2s}'.format(str(data[1]).split('.')[0]))
+    display_line(img, font, int(width - 2.125 * 8), ly, str(data[1]).split('.')[1])
+    draw.line((x, ly + 8, width - 2, ly + 8), underline)
+
+    # Weight section
+    ly += 8 + 4
+    display_line(img, font, x, ly, 'WT')
+    display_char(img, font, width - 2 * 8 + 1, ly, 'k')
+    display_char(img, font, width - 8, ly, 'g')
+    display_char(img, font, int(width - 3.5 * 8), ly, '.')
+    display_line(img, font, int(width - 6.25 * 8), ly, '{: >3s}'.format(str(data[2]).split('.')[0]))
+    display_line(img, font, int(width - 2.875 * 8), ly, str(data[2]).split('.')[1])
+    draw.line((x, ly + 8, width - 2, ly + 8), underline)
+
+
+if __name__ == '__main__':
+    from inky import InkyPHAT
+    inky_display = InkyPHAT('yellow')
+    inky_display.set_border(inky_display.BLACK)
+    img = Image.new("P", (inky_display.WIDTH, inky_display.HEIGHT))
+    font = Image.open('assets/ui/gscfont.png')
+
+    display_sprite(img, 1, 1, 129, 2, 0)
+    display_numeric(img, font, 2, 69, 69, (129, 0.9, 10.0))
+
+    img = img.rotate(180)
+    inky_display.set_image(img)
+    inky_display.show()
