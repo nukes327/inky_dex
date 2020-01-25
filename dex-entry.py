@@ -379,8 +379,13 @@ if __name__ == '__main__':
     img = Image.new("P", (inky_display.WIDTH, inky_display.HEIGHT))
     font = Image.open('assets/ui/gscfont.png')
 
-    display_sprite(img, 1, 1, 129, 2, 0)
-    display_numeric(img, font, 2, 69, 69, (129, 0.9, 10.0))
+    id = 129
+
+    entry = get_entry(id, 2, 0)
+    data = get_data(id)
+
+    display_sprite(img, 1, 1, id, 2, 0)
+    display_numeric(img, font, 2, 69, 69, (id, data[1], data[2]))
 
     img = img.rotate(180)
     inky_display.set_image(img)
