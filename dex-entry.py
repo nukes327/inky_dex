@@ -340,36 +340,36 @@ def display_numeric(img: Image, font: Image, x: int, y: int, width: int, data: T
 
     Todo:
         Still contains some magic numbers, should work on this
-        Width is wrong, right bound not width
 
     """
     draw = ImageDraw.Draw(img)
-    underline = 2
+    underline = 2  # Third color on a three color inky display
     ly = y
+    right_bound = x + width
 
     # ID section
     display_line(img, font, x, ly, 'ⓃⓄ')
-    display_line(img, font, width - (3 * 8), ly, '{0:03d}'.format(data[0]))
-    draw.line((x, ly + 8, width - 2, ly + 8), underline)
+    display_line(img, font, right_bound - (3 * 8), ly, '{0:03d}'.format(data[0]))
+    draw.line((x, ly + 8, right_bound - 2, ly + 8), underline)
 
     # Height section
     ly += 8 + 4
     display_line(img, font, x, ly, 'HT')
-    display_char(img, font, width - 8, ly, 'm')
-    display_char(img, font, int(width - 2.75 * 8), ly, '.')
-    display_line(img, font, int(width - 4.5 * 8), ly, '{: >2s}'.format(str(data[1]).split('.')[0]))
-    display_line(img, font, int(width - 2.125 * 8), ly, str(data[1]).split('.')[1])
-    draw.line((x, ly + 8, width - 2, ly + 8), underline)
+    display_char(img, font, right_bound - 8, ly, 'm')
+    display_char(img, font, int(right_bound - 2.75 * 8), ly, '.')
+    display_line(img, font, int(right_bound - 4.5 * 8), ly, '{: >2s}'.format(str(data[1]).split('.')[0]))
+    display_line(img, font, int(right_bound - 2.125 * 8), ly, str(data[1]).split('.')[1])
+    draw.line((x, ly + 8, right_bound - 2, ly + 8), underline)
 
     # Weight section
     ly += 8 + 4
     display_line(img, font, x, ly, 'WT')
-    display_char(img, font, width - 2 * 8 + 1, ly, 'k')
-    display_char(img, font, width - 8, ly, 'g')
-    display_char(img, font, int(width - 3.5 * 8), ly, '.')
-    display_line(img, font, int(width - 6.25 * 8), ly, '{: >3s}'.format(str(data[2]).split('.')[0]))
-    display_line(img, font, int(width - 2.875 * 8), ly, str(data[2]).split('.')[1])
-    draw.line((x, ly + 8, width - 2, ly + 8), underline)
+    display_char(img, font, right_bound - 2 * 8 + 1, ly, 'k')
+    display_char(img, font, right_bound - 8, ly, 'g')
+    display_char(img, font, int(right_bound - 3.5 * 8), ly, '.')
+    display_line(img, font, int(right_bound - 6.25 * 8), ly, '{: >3s}'.format(str(data[2]).split('.')[0]))
+    display_line(img, font, int(right_bound - 2.875 * 8), ly, str(data[2]).split('.')[1])
+    draw.line((x, ly + 8, right_bound - 2, ly + 8), underline)
 
 
 if __name__ == '__main__':
@@ -379,6 +379,7 @@ if __name__ == '__main__':
     img = Image.new("P", (inky_display.WIDTH, inky_display.HEIGHT))
     font = Image.open('assets/ui/gscfont.png')
 
+<<<<<<< HEAD
     id = 129
 
     entry = get_entry(id, 2, 0)
@@ -386,6 +387,10 @@ if __name__ == '__main__':
 
     display_sprite(img, 1, 1, id, 2, 0)
     display_numeric(img, font, 2, 69, 69, (id, data[1], data[2]))
+=======
+    display_sprite(img, 1, 1, 129, 2, 0)
+    display_numeric(img, font, 2, 69, 67, (129, 0.9, 10.0))
+>>>>>>> f5a5dcc845eee9016f9d6b6f4de3d3258ed82a15
 
     img = img.rotate(180)
     inky_display.set_image(img)
