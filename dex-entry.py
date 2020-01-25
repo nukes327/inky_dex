@@ -8,6 +8,25 @@ Todo:
     Implement command line arguments to use as an individual script.
     Port remaining code necessary from display-test.
 
+Notes:
+    The PNG specification provides support for a textual chunk in the header
+    information. This tEXt chunk supports a key-value pair in each chunk,
+    and I can use these to encode useful information in all the assets included
+    with this script, to be read out later. I plan to write a script or find a
+    tool that will allow me to include information as follows:
+
+    Font Files:
+        CHARHEIGHT - Individual character height in pixels
+        CHARWIDTH  - Individual character width in pixels
+        SHEET      - A string containing character ordering/location information
+                     May need to use zTXt if length is an issue
+
+    Possible in sprite files:
+        SPECIES
+        WEIGHT
+        HEIGHT
+        ENTRY
+
 """
 
 from typing import List, Tuple

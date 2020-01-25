@@ -14,6 +14,7 @@ from PIL import Image, ImageDraw  # type: ignore
 
 """
 Turns out if you have red in an image, but the display is set to black, it'll display as gray.
+This is at least true on a screen that supports all colors, unsure on one that only supports black/white
 This will be convenient for quickly testing code that dynamically displays sprites on the screen
 A 2 second refresh time allows for more rapid testing than a 15 second refresh time
 """
