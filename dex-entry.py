@@ -18,10 +18,11 @@ Notes:
     Font Files:
         CHARHEIGHT - Individual character height in pixels
         CHARWIDTH  - Individual character width in pixels
+        SHEETWIDTH - Width of font sheet in characters
         SHEET      - A string containing character ordering/location information
-                     May need to use zTXt if length is an issue
+                     Use iTXt for UTF-8 supported characters
 
-    Possible in sprite files:
+    Possibly in sprite files:
         SPECIES
         WEIGHT
         HEIGHT
@@ -31,6 +32,8 @@ Notes:
 
 from typing import List, Tuple
 from PIL import Image, ImageDraw  # type: ignore
+import re
+import png
 
 
 def get_entry(id: int, gen: int, ver: int) -> str:
@@ -282,6 +285,64 @@ def display_lines(img: Image, font: Image, x: int, y: int, lines: List[str],
     """
     for line, index in zip(lines, range(len(lines))):
         display_line(img, font, x, y + index * (char_height + line_gap), line, char_width, char_height)
+
+
+def decode_font(font: Image) -> Tuple[int, int, int, str]:
+    """Extract metadata from font image.
+
+    Args:
+        font: The font image to extract data from
+
+    Returns:
+        Tuple containing, in order:
+            Width of each character in pixels
+            Height of each character in pixels
+            Width in characters of the sheet
+            String used to decode character locations in sheet by prior values
+
+    Notes:
+        The returned values are decoded from ancillary chunks in the font PNG
+        The location or order of the chunks doesn't matter as long as it passes PNG spec,
+        The chunks be formatted as follows:
+
+            Chunk Flag:
+                tEXt
+            Keyword:
+                CHARWIDTH
+            Value:
+                integer width in pixels of individual character
+
+            Chunk Flag:
+                tEXt
+            Keyword:
+                CHARHEIGHT
+            Value:
+                integer height in pixels of individual character
+
+            Chunk Flag:
+                tEXt
+            Keyword:
+                SHEETWIDTH
+            Value:
+                integer width in characters of the fontsheet
+
+            Chunk Flag:
+                iTXt
+            Keyword:
+                SHEETSTRING
+            Value:
+                string containing all characters, left to right, top down
+
+    Todo:
+        Implement metadata extraction
+        Add necessary chunks to extant fontsheets
+        Add remaining required data to iTXt chunk information
+        Add more documentation on fontsheet requirements:
+            Move some documentation out of this docstring?
+            Document required unicode characters for special sheet characters
+
+    """
+    pass
 
 
 def display_sprite(img: Image, x: int, y: int, id: int, gen: int, ver: int, form: int = 0) -> None:
