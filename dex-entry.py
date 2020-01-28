@@ -30,7 +30,7 @@ Notes:
 
 """
 
-from typing import List, Tuple
+from typing import List, Tuple, Dict
 from PIL import Image, ImageDraw  # type: ignore
 import re
 import png  # type: ignore
@@ -287,18 +287,18 @@ def display_lines(img: Image, font: Image, x: int, y: int, lines: List[str],
         display_line(img, font, x, y + index * (char_height + line_gap), line, char_width, char_height)
 
 
-def decode_font(font: str) -> Tuple[int, int, int, str]:
+def decode_font(font: str) -> Dict[int, int, int, str]:
     """Extract metadata from font image.
 
     Args:
         font: The filename for the sheet to be used
 
     Returns:
-        Tuple containing, in order:
-            Width of each character in pixels
-            Height of each character in pixels
-            Width in characters of the sheet
-            String used to decode character locations in sheet by prior values
+        Dictionary containing the following pairs:
+            CHARWIDTH:   int
+            CHARHEIGHT:  int
+            SHEETWIDTH:  int
+            SHEETSTRING: str
 
     Notes:
         The returned values are decoded from ancillary chunks in the font PNG
@@ -343,15 +343,21 @@ def decode_font(font: str) -> Tuple[int, int, int, str]:
     """
     sheet = png.Reader(filename=font)
     chunk_list = list(sheet.chunks())
-    cw = re.compile(b'(CHARWIDTH).[0-9]+')
-    ch = re.compile(b'(CHARHEIGHT).[0-9]+')
-    sw = re.compile(b'(SHEETWIDTH).[0-9]+')
-    sh = re.compile(b'(SHEETSTRING).(.*)')
+    metadata = {}
 
     # compare chunks to regexes, add as key: value pairs to a dictionary
     # return in proper order
+    for chunk in chunk_list:
+        if re.compile(b'..Xt').match(chunk[0]):
+            keyword, value = bytes.decode(chunk[1]).split('\x00')
+            if keyword != 'SHEETSTRING':
+                metadata[keyword] = int(value)
+            else:
+                metadata[keyword] = value
 
-    return (8, 8, 16, 'abcdefg')
+    return metadata
+    # return (8, 8, 16, "ABCDEFGHIJKLMNOPQRSTUVWXYZ():;[]abcdefghijklmnopqrstuvwxyz      "
+    #         "ÄÖÜäöü          ⓓⓛⓜⓡⓢⓣⓥ       ⓃⓄ'①②-  ?!.&é ▷▶▼♂$×./,♀0123456789")
 
 
 def display_sprite(img: Image, x: int, y: int, id: int, gen: int, ver: int, form: int = 0) -> None:

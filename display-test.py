@@ -19,6 +19,7 @@ This will be convenient for quickly testing code that dynamically displays sprit
 A 2 second refresh time allows for more rapid testing than a 15 second refresh time
 """
 
+
 def init_config():
     config = configparser.ConfigParser()
     config['DEFAULT'] = {
@@ -30,6 +31,7 @@ def init_config():
             'sprite_scale': 1}
     with open('dex.ini', 'w+') as conffile:
         config.write(conffile)
+
 
 if not os.path.isfile('dex.ini'):
     print('No config found, generating an empty one')
