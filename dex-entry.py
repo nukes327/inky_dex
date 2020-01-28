@@ -474,7 +474,7 @@ if __name__ == '__main__':
     data = get_data(id)
 
     display_sprite(img, 1, 1, id, 2, 0)
-    display_numeric(img, font, 2, 69, 67, (id, data[1], data[2]))
+    display_numeric(img, font, 2, 69, 67, (id, data[2], data[3]))
 
     img = img.rotate(180)
     inky_display.set_image(img)

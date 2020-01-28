@@ -24,7 +24,7 @@ def init_config():
     config['DEFAULT'] = {
             'type': '',
             'color': '',
-            'font': 'gscfont.png',
+            'font': 'assets/ui/gscfont.png',
             'char_width': 8,
             'char_height': 8,
             'sprite_scale': 1}
@@ -156,16 +156,16 @@ def dex_data_display(number, height, weight, species, classification):
 
 
 def sprite_display(x, y, number, form = 0, version = 0, scale = 1):
-    box = Image.open('spritebox.png')
+    box = Image.open('assets/ui/spritebox.png')
     box = box.resize((box.width * scale, box.height * scale))
-    sprite_sheet = Image.open('sprites/{:03d}.png'.format(number))
+    sprite_sheet = Image.open('assets/sprites/{:03d}.png'.format(number))
     sprite = sprite_sheet.crop((0, 56 * version, 56, 56 + 56 * version))
     sprite = sprite.resize((sprite.width * scale, sprite.height * scale))
     img.paste(box, (x, y), create_mask(box))
     img.paste(sprite, (x + 6 * scale, y + 6 * scale), create_mask(sprite))
 
 def footprint_display(x, y, number, scale = 1):
-    sprite_sheet = Image.open('sprites/{:03d}.png'.format(number))
+    sprite_sheet = Image.open('assets/sprites/{:03d}.png'.format(number))
     footprint = sprite_sheet.crop((0, 112, 16, 128))
     footprint = footprint.resize((footprint.width * scale, footprint.height * scale))
     img.paste(footprint, (x, y))
