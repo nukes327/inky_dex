@@ -33,7 +33,7 @@ Notes:
 from typing import List, Tuple
 from PIL import Image, ImageDraw  # type: ignore
 import re
-import png
+import png  # type: ignore
 
 
 def get_entry(id: int, gen: int, ver: int) -> str:
@@ -287,11 +287,11 @@ def display_lines(img: Image, font: Image, x: int, y: int, lines: List[str],
         display_line(img, font, x, y + index * (char_height + line_gap), line, char_width, char_height)
 
 
-def decode_font(font: Image) -> Tuple[int, int, int, str]:
+def decode_font(font: str) -> Tuple[int, int, int, str]:
     """Extract metadata from font image.
 
     Args:
-        font: The font image to extract data from
+        font: The filename for the sheet to be used
 
     Returns:
         Tuple containing, in order:
@@ -309,40 +309,49 @@ def decode_font(font: Image) -> Tuple[int, int, int, str]:
                 tEXt
             Keyword:
                 CHARWIDTH
-            Value:
+            Text:
                 integer width in pixels of individual character
 
             Chunk Flag:
                 tEXt
             Keyword:
                 CHARHEIGHT
-            Value:
+            Text:
                 integer height in pixels of individual character
 
             Chunk Flag:
                 tEXt
             Keyword:
                 SHEETWIDTH
-            Value:
+            Text:
                 integer width in characters of the fontsheet
 
             Chunk Flag:
                 iTXt
             Keyword:
                 SHEETSTRING
-            Value:
+            Text:
                 string containing all characters, left to right, top down
 
     Todo:
         Implement metadata extraction
         Add necessary chunks to extant fontsheets
-        Add remaining required data to iTXt chunk information
         Add more documentation on fontsheet requirements:
             Move some documentation out of this docstring?
             Document required unicode characters for special sheet characters
 
     """
-    pass
+    sheet = png.Reader(filename=font)
+    chunk_list = list(sheet.chunks())
+    cw = re.compile(b'(CHARWIDTH).[0-9]+')
+    ch = re.compile(b'(CHARHEIGHT).[0-9]+')
+    sw = re.compile(b'(SHEETWIDTH).[0-9]+')
+    sh = re.compile(b'(SHEETSTRING).(.*)')
+
+    # compare chunks to regexes, add as key: value pairs to a dictionary
+    # return in proper order
+
+    return (8, 8, 16, 'abcdefg')
 
 
 def display_sprite(img: Image, x: int, y: int, id: int, gen: int, ver: int, form: int = 0) -> None:
@@ -453,7 +462,7 @@ def display_numeric(img: Image, font: Image, x: int, y: int, width: int, data: T
 
 
 if __name__ == '__main__':
-    from inky import InkyPHAT
+    from inky import InkyPHAT  # type: ignore
     inky_display = InkyPHAT('yellow')
     inky_display.set_border(inky_display.BLACK)
     img = Image.new("P", (inky_display.WIDTH, inky_display.HEIGHT))
