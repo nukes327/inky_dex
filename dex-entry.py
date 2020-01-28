@@ -349,7 +349,9 @@ def decode_font(font: str) -> Dict[int, int, int, str]:
     # return in proper order
     for chunk in chunk_list:
         if re.compile(b'..Xt').match(chunk[0]):
-            keyword, value = bytes.decode(chunk[1]).split('\x00')
+            decoded = bytes.decode(chunk[1]).split('\x00')
+            keyword = decoded[0]
+            value = decoded[-1]
             if keyword != 'SHEETSTRING':
                 metadata[keyword] = int(value)
             else:
