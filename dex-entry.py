@@ -7,26 +7,7 @@ Todo:
     Implement clean dex display for PHAT and WHAT displays.
     Implement command line arguments to use as an individual script.
     Port remaining code necessary from display-test.
-
-Notes:
-    The PNG specification provides support for a textual chunk in the header
-    information. This tEXt chunk supports a key-value pair in each chunk,
-    and I can use these to encode useful information in all the assets included
-    with this script, to be read out later. I plan to write a script or find a
-    tool that will allow me to include information as follows:
-
-    Font Files:
-        CHARHEIGHT - Individual character height in pixels
-        CHARWIDTH  - Individual character width in pixels
-        SHEETWIDTH - Width of font sheet in characters
-        SHEET      - A string containing character ordering/location information
-                     Use iTXt for UTF-8 supported characters
-
-    Possibly in sprite files:
-        SPECIES
-        WEIGHT
-        HEIGHT
-        ENTRY
+    The textual output to the display probably needs to be refactored to account for more variables
 
 """
 
@@ -287,7 +268,7 @@ def display_lines(img: Image, font: Image, x: int, y: int, lines: List[str],
         display_line(img, font, x, y + index * (char_height + line_gap), line, char_width, char_height)
 
 
-def decode_font(font: str) -> Dict[int, int, int, str]:
+def get_font_metadata(font: str) -> Dict[int, int, int, str]:
     """Extract metadata from font image.
 
     Args:
@@ -437,6 +418,7 @@ def display_numeric(img: Image, font: Image, x: int, y: int, width: int, data: T
 
     Todo:
         Still contains some magic numbers, should work on this
+        Refactor to support more input variables
 
     """
     draw = ImageDraw.Draw(img)
@@ -480,6 +462,7 @@ if __name__ == '__main__':
 
     entry = get_entry(id, 2, 0)
     data = get_data(id)
+    font_data = get_font_metadata('assets/ui/gscfont.png')
 
     display_sprite(img, 1, 1, id, 2, 0)
     display_numeric(img, font, 2, 69, 67, (id, data[2], data[3]))

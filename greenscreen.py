@@ -15,6 +15,13 @@ Notes:
     Once the image is saved in the assets directory this script can be run to clean
     any images of greenscreen, leaving behind transparency.
 
+WARNING:
+    PIL completely CLOBBERS any tEXt tags that were in the image from a quick test
+    This is potentially a MAJOR issue, more testing needs to be done
+
+Todo:
+    Modify this script so it doesn't clobber tEXt chunks that were added to the image
+
 """
 
 
