@@ -11,7 +11,7 @@ Todo:
 
 """
 
-from typing import List, Tuple, Dict
+from typing import List, Tuple, Dict, Union
 from PIL import Image, ImageDraw  # type: ignore
 import re
 import png  # type: ignore
@@ -268,7 +268,7 @@ def display_lines(img: Image, font: Image, x: int, y: int, lines: List[str],
         display_line(img, font, x, y + index * (char_height + line_gap), line, char_width, char_height)
 
 
-def get_font_metadata(font: str) -> Dict[int, int, int, str]:
+def get_font_metadata(font: str) -> Dict[str, Union[int, str]]:
     """Extract metadata from font image.
 
     Args:
