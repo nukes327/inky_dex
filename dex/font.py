@@ -4,14 +4,13 @@
 """Carry png font information and related methods.
 
 Todo:
-    Implement class
+    Document special character usage
 
 """
 
+import re
 from PIL import Image  # type: ignore
 import png  # type: ignore
-import re
-from typing import Dict, Union
 
 
 class Font:
@@ -25,7 +24,10 @@ class Font:
 
         """
         self.filename = filename
-        self.metadata: Dict[str, Union[int, str]] = {}
+        self.charwidth: int
+        self.charheight: int
+        self.sheetwidth: int
+        self.sheetstring: str
         self.image = Image.open(self.filename)
         self.update_metadata()
 
@@ -33,6 +35,7 @@ class Font:
         """Load metadata from font png chunks."""
         sheet = png.Reader(filename=self.filename)
         chunk_list = list(sheet.chunks())
+        metadata = {}
 
         for chunk in chunk_list:
             if re.compile(b'..Xt').match(chunk[0]):
@@ -40,6 +43,25 @@ class Font:
                 keyword = decoded[0]
                 value = decoded[-1]
                 if keyword != 'SHEETSTRING':
-                    self.metadata[keyword] = int(value)
+                    metadata[keyword] = int(value)
                 else:
-                    self.metadata[keyword] = value
+                    self.sheetstring = value
+
+        self.charwidth = metadata['CHARWIDTH']
+        self.charheight = metadata['CHARHEIGHT']
+        self.sheetwidth = metadata['SHEETWIDTH']
+
+    def get_character(self, character: str) -> Image:
+        """Return a single character from the font sheet.
+
+        Args:
+            character: The character or special character replacement to fetch
+
+        """
+        index = self.sheetstring.index(character)
+        sheet_x = (index % self.sheetwidth) * self.charwidth
+        sheet_y = (int(index / self.sheetwidth)) * self.charheight
+        right_bound = sheet_x + self.charwidth
+        lower_bound = sheet_y + self.charheight
+        return self.image.crop((sheet_x, sheet_y, right_bound, lower_bound))
+

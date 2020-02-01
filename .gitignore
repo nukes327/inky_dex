@@ -1,3 +1,4 @@
 rapid-check.py
 *.xcf
 *.ini
+.mypy_cache

@@ -8,6 +8,8 @@ Todo:
     Implement command line arguments to use as an individual script.
     Port remaining code necessary from display-test.
     The textual output to the display probably needs to be refactored to account for more variables
+        - in progress
+    Formatter class or module for building pasteable strings, floats?
 
 """
 
