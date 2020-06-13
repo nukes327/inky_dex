@@ -2,3 +2,5 @@ rapid-check.py
 *.xcf
 *.ini
 .mypy_cache
+last_display.png
+__pycache__
