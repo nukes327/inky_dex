@@ -13,11 +13,9 @@ Todo:
 
 """
 
-from typing import List, Tuple, Dict, Union
+from typing import List, Tuple
 from PIL import Image, ImageDraw  # type: ignore
-from PIL.ImagePalette import ImagePalette
-import re
-import png  # type: ignore
+from PIL.ImagePalette import ImagePalette  # type: ignore
 from dex.font import Font
 
 
@@ -256,13 +254,12 @@ def display_sprite(img: Image, location: Tuple[int, int], id: int, gen: int, ver
     """Paste sprite and bounding box into display image.
 
     Args:
-        img:  The display image to be pasted into
-        x:    X coordinate to paste sprite
-        y:    Y coordinate to paste sprite
-        id:   Id of the pokemon sprite to paste
-        gen:  Generation to pull sprite from
-        ver:  Version within generation to pull sprite from
-        form: Choose form if pokemon has more than one
+        img:      The display image to be pasted into
+        location: (x, y) location tuple to paste character
+        id:       Id of the pokemon sprite to paste
+        gen:      Generation to pull sprite from
+        ver:      Version within generation to pull sprite from
+        form:     Choose form if pokemon has more than one
 
     Notes:
         X and Y coordinates are anchored to the top left of the bounding box
@@ -381,7 +378,6 @@ if __name__ == "__main__":
     entry = get_entry(id, 2, 0)
     data = get_data(id)
     font = Font("assets/ui/gscfont.png")
-    print(font)
 
     display_sprite(img, (1, 1), id, 2, 0)
     display_numeric(img, font, (2, 69), 67, (id, data[2], data[3]))
