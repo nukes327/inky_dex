@@ -362,7 +362,7 @@ def display_numeric(
 if __name__ == "__main__":
     try:
         from inky import InkyPHAT  # type: ignore
-    except ModuleNotFoundError:
+    except (ModuleNotFoundError, RuntimeError):
         print("Inky library absent, will not display to e-ink")
         print("Setting image size to PHAT")
         img = Image.new("P", (212, 104))
