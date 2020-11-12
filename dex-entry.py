@@ -229,7 +229,7 @@ def display_line(img: Image, font: Font, location: Tuple[int, int], line: str) -
         display_char(img, font, (location[0] + font.charwidth * index, location[1]), character)
 
 
-def display_lines(img: Image, font: Font, location: Tuple[int, int], lines: List[str], line_gap: int = 4,) -> None:
+def display_lines(img: Image, font: Font, location: Tuple[int, int], lines: List[str], line_gap: int = 4) -> None:
     """Paste multiple lines into a display image using characters from a fontsheet.
 
     Args:
