@@ -29,21 +29,33 @@ class Pokemon:
 
     """
 
-    def __init__(self, number: int):
+    def __init__(self, id: int):
         """Initialize values for pokemon object.
 
         Args:
             number: National dex number of pokemon to create
 
         """
-        self.number = number
+        self.id = id
         self.species: str
         self.classification: str
-        self.weight: float
         self.height: float
+        self.weight: float
         self.entries: Dict[Tuple[int, int], str]
         self.load_data()
 
+    def __repr__(self) -> str:
+        return f"Pokemon({self.id})"
+
     def load_data(self) -> None:
         """Load pokemon data from database."""
-        pass
+        # load from DB based on ID
+        self.species = "Magikarp"
+        self.classification = "Fish"
+        self.height = 0.9
+        self.weight = 10.0
+        entry = (
+            "For no reason, it jumps and splashes about, making it "
+            "easy for predators like Pidgeotto to catch it mid-jump."
+        )
+        self.entries = {(2, 2): entry}

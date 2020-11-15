@@ -17,6 +17,7 @@ from typing import List, Tuple
 from PIL import Image, ImageDraw  # type: ignore
 from PIL.ImagePalette import ImagePalette  # type: ignore
 from dex.font import Font
+from dex.poke import Pokemon
 
 
 def get_entry(id: int, gen: int, ver: int) -> str:
@@ -301,9 +302,7 @@ def display_footprint(img: Image, location: Tuple[int, int], id: int) -> None:
     img.paste(footprint, location, create_mask(footprint))
 
 
-def display_numeric(
-    img: Image, font: Font, location: Tuple[int, int], width: int, data: Tuple[int, float, float]
-) -> None:
+def display_numeric(img: Image, font: Font, location: Tuple[int, int], width: int, mon: Pokemon) -> None:
     """Paste numeric data into display image.
 
     Args:
@@ -336,7 +335,7 @@ def display_numeric(
 
     # ID section
     display_line(img, font, (x, ly), "ⓃⓄ")
-    display_line(img, font, (right_bound - (3 * 8), ly), "{0:03d}".format(data[0]))
+    display_line(img, font, (right_bound - (3 * 8), ly), "{0:03d}".format(mon.id))
     draw.line((x, ly + 8, right_bound - 2, ly + 8), underline)
 
     # Height section
@@ -344,8 +343,8 @@ def display_numeric(
     display_line(img, font, (x, ly), "HT")
     display_char(img, font, (right_bound - 8, ly), "m")
     display_char(img, font, (int(right_bound - 2.75 * 8), ly), ".")
-    display_line(img, font, (int(right_bound - 4.5 * 8), ly), "{: >2s}".format(str(data[1]).split(".")[0]))
-    display_line(img, font, (int(right_bound - 2.125 * 8), ly), str(data[1]).split(".")[1])
+    display_line(img, font, (int(right_bound - 4.5 * 8), ly), "{: >2s}".format(str(mon.height).split(".")[0]))
+    display_line(img, font, (int(right_bound - 2.125 * 8), ly), str(mon.height).split(".")[1])
     draw.line((x, ly + 8, right_bound - 2, ly + 8), underline)
 
     # Weight section
@@ -354,8 +353,8 @@ def display_numeric(
     display_char(img, font, (right_bound - 2 * 8 + 1, ly), "k")
     display_char(img, font, (right_bound - 8, ly), "g")
     display_char(img, font, (int(right_bound - 3.5 * 8), ly), ".")
-    display_line(img, font, (int(right_bound - 6.25 * 8), ly), "{: >3s}".format(str(data[2]).split(".")[0]))
-    display_line(img, font, (int(right_bound - 2.875 * 8), ly), str(data[2]).split(".")[1])
+    display_line(img, font, (int(right_bound - 6.25 * 8), ly), "{: >3s}".format(str(mon.weight).split(".")[0]))
+    display_line(img, font, (int(right_bound - 2.875 * 8), ly), str(mon.weight).split(".")[1])
     draw.line((x, ly + 8, right_bound - 2, ly + 8), underline)
 
 
@@ -375,12 +374,14 @@ if __name__ == "__main__":
 
     id = 129
 
-    entry = get_entry(id, 2, 0)
-    data = get_data(id)
+    mon = Pokemon(129)
+
+    # entry = get_entry(id, 2, 0)
+    # data = get_data(id)
     font = Font("assets/ui/gscfont.png")
 
     display_sprite(img, (1, 1), id, 2, 0)
-    display_numeric(img, font, (2, 69), 67, (id, data[2], data[3]))
+    display_numeric(img, font, (2, 69), 67, mon)
 
     img = img.rotate(180)
     if en_inky:
