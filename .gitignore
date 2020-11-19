@@ -4,3 +4,4 @@ rapid-check.py
 .mypy_cache
 last_display.png
 __pycache__
+logs/*.log
