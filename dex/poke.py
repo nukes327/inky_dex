@@ -13,6 +13,7 @@ Notes:
 """
 
 from typing import Dict, Tuple
+import logging
 
 
 class Pokemon:
@@ -36,6 +37,8 @@ class Pokemon:
             number: National dex number of pokemon to create
 
         """
+        self.logger = logging.getLogger(__name__)
+        self.logger.debug(f"Pokemon({id})")
         self.id = id
         self.species: str
         self.classification: str

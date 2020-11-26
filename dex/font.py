@@ -38,18 +38,18 @@ class Font:
         metadata = {}
 
         for chunk in chunk_list:
-            if re.compile(b'..Xt').match(chunk[0]):
-                decoded = bytes.decode(chunk[1]).split('\x00')
+            if re.compile(b"..Xt").match(chunk[0]):
+                decoded = bytes.decode(chunk[1]).split("\x00")
                 keyword = decoded[0]
                 value = decoded[-1]
-                if keyword != 'SHEETSTRING':
+                if keyword != "SHEETSTRING":
                     metadata[keyword] = int(value)
                 else:
                     self.sheetstring = value
 
-        self.charwidth = metadata['CHARWIDTH']
-        self.charheight = metadata['CHARHEIGHT']
-        self.sheetwidth = metadata['SHEETWIDTH']
+        self.charwidth = metadata["CHARWIDTH"]
+        self.charheight = metadata["CHARHEIGHT"]
+        self.sheetwidth = metadata["SHEETWIDTH"]
 
     def get_character(self, character: str) -> Image:
         """Return a single character from the font sheet.
@@ -64,4 +64,3 @@ class Font:
         right_bound = sheet_x + self.charwidth
         lower_bound = sheet_y + self.charheight
         return self.image.crop((sheet_x, sheet_y, right_bound, lower_bound))
-

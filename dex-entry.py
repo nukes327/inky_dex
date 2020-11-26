@@ -18,6 +18,7 @@ from PIL import Image, ImageDraw  # type: ignore
 from PIL.ImagePalette import ImagePalette  # type: ignore
 from dex.font import Font
 from dex.poke import Pokemon
+import logging
 
 
 def get_entry(id: int, gen: int, ver: int) -> str:
