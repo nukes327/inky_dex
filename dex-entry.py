@@ -19,6 +19,9 @@ from PIL.ImagePalette import ImagePalette  # type: ignore
 from dex.font import Font
 from dex.poke import Pokemon
 import logging
+import logging.config
+import os
+import random
 
 
 def get_entry(id: int, gen: int, ver: int) -> str:
@@ -151,7 +154,7 @@ def entry_wrap(entry: str, line_length: int = 17, line_count: int = 7) -> List[s
             if len(line_strings[line_index]) < line_length:
                 line_strings[line_index] += " "
         else:
-            wrap_index = line_length - len(line_strings[line_index])
+            wrap_index = line_length - len(line_strings[line_index]) - 1
             line_strings[line_index] += words[i][:wrap_index] + "-"
             line_index += 1
             line_strings[line_index] += words[i][wrap_index:] + " "
@@ -252,7 +255,7 @@ def display_lines(img: Image, font: Font, location: Tuple[int, int], lines: List
         display_line(img, font, (location[0], location[1] + index * (font.charheight + line_gap)), line)
 
 
-def display_sprite(img: Image, location: Tuple[int, int], id: int, gen: int, ver: int, form: int = 0) -> None:
+def display_sprite(img: Image, location: Tuple[int, int], mon: Pokemon) -> None:
     """Paste sprite and bounding box into display image.
 
     Args:
@@ -279,13 +282,14 @@ def display_sprite(img: Image, location: Tuple[int, int], id: int, gen: int, ver
     sprite_sheet = Image.open("assets/sprites/{:03d}.png".format(id))
 
     # TODO: Put this next line in a try/except or get index errors for high gens
-    sprite = sprite_sheet.crop((0, 56 * ver, 56, 56 + 56 * ver))
+    # sprite = sprite_sheet.crop((0, 56 * ver, 56, 56 + 56 * ver))
+    sprite = random.choice(mon.sprites)
 
     img.paste(box, location, create_mask(box))
     img.paste(sprite, tuple(n + 6 for n in location), create_mask(sprite))
 
 
-def display_footprint(img: Image, location: Tuple[int, int], id: int) -> None:
+def display_footprint(img: Image, location: Tuple[int, int], mon: Pokemon) -> None:
     """Paste footprint sprite into display image.
 
     Args:
@@ -298,9 +302,7 @@ def display_footprint(img: Image, location: Tuple[int, int], id: int) -> None:
         sprite area, 0,0 is the top left of the display.
 
     """
-    sprite_sheet = Image.open("assets/sprites/{:03d}.png".format(id))
-    footprint = sprite_sheet.crop((0, 112, 16, 128))
-    img.paste(footprint, location, create_mask(footprint))
+    img.paste(mon.footprint, location, create_mask(mon.footprint))
 
 
 def display_numeric(img: Image, font: Font, location: Tuple[int, int], width: int, mon: Pokemon) -> None:
@@ -361,10 +363,20 @@ def display_numeric(img: Image, font: Font, location: Tuple[int, int], width: in
 
 if __name__ == "__main__":
     try:
+        os.mkdir("logs")
+    except FileExistsError:
+        dir_created = False
+    else:
+        dir_created = True
+    finally:
+        logging.config.fileConfig("config/logging.ini")
+        logger = logging.getLogger(__name__)
+        if dir_created:
+            logger.info("Logs folder was not present, was created")
+    try:
         from inky import InkyPHAT  # type: ignore
-    except (ModuleNotFoundError, RuntimeError):
-        print("Inky library absent, will not display to e-ink")
-        print("Setting image size to PHAT")
+    except (ModuleNotFoundError, RuntimeError) as e:
+        logger.debug(f"Error initializing inky library: {e}")
         img = Image.new("P", (212, 104))
         en_inky = False
     else:
@@ -375,14 +387,15 @@ if __name__ == "__main__":
 
     id = 129
 
-    mon = Pokemon(129)
+    mon = Pokemon(id)
 
     # entry = get_entry(id, 2, 0)
     # data = get_data(id)
     font = Font("assets/ui/gscfont.png")
 
-    display_sprite(img, (1, 1), id, 2, 0)
+    display_sprite(img, (1, 1), mon)
     display_numeric(img, font, (2, 69), 67, mon)
+    display_lines(img, font, (71, 23), entry_wrap(random.choice(list(mon.entries.values()))))
 
     img = img.rotate(180)
     if en_inky:

@@ -12,7 +12,8 @@ Notes:
 
 """
 
-from typing import Dict, Tuple
+from typing import Dict, Tuple, List
+from PIL import Image  # type: ignore
 import logging
 
 
@@ -45,10 +46,20 @@ class Pokemon:
         self.height: float
         self.weight: float
         self.entries: Dict[Tuple[int, int], str]
+        self.sprites: List[Image.Image] = []
+        self.footprint: Image.Image
+        self.load_images()
         self.load_data()
 
     def __repr__(self) -> str:
         return f"Pokemon({self.id})"
+
+    def load_images(self) -> None:
+        """Load sprites and footprint from spritesheet."""
+        sprite_sheet = Image.open(f"assets/sprites/{self.id}.png")
+        self.sprites.append(sprite_sheet.crop((0, 0, 56, 56)))
+        self.sprites.append(sprite_sheet.crop((0, 56, 56, 112)))
+        self.footprint = sprite_sheet.crop((0, 112, 16, 128))
 
     def load_data(self) -> None:
         """Load pokemon data from database."""

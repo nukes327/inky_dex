@@ -51,8 +51,6 @@ def window() -> None:
     win.setWindowTitle("Testing UI")
 
     output = OutputChecker(win)
-    print(output.sizeHint())
-    # print(output.margin())
 
     win.setFixedSize(output.sizeHint())
     win.setStyleSheet("QMainWindow {background: 'gray';}")
