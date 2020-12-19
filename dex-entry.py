@@ -306,62 +306,6 @@ def display_footprint(img: Image, location: Tuple[int, int], mon: Pokemon) -> No
     img.paste(mon.footprint, location, create_mask(mon.footprint))
 
 
-def display_numeric_old(img: Image, font: Font, location: Tuple[int, int], width: int, mon: Pokemon) -> None:
-    """Paste numeric data into display image.
-
-    Args:
-        img:      Display image to be pasted into
-        font:     Fontsheet image
-        location: (x, y) location tuple to paste character
-        width:    How wide the section should be
-        data:     Numeric data to be pasted
-                  Tuple with data in the following order:
-                    ID
-                    Height
-                    Weight
-
-    Notes:
-        X and Y coordinates are the top left of the ID line for numeric data
-        0,0 is the top left of the display
-        Too many digits in height or weight for given width may cause issues
-
-    Todo:
-        Still contains some magic numbers, should work on this
-        Refactor to support more input variables
-
-    """
-    draw = ImageDraw.Draw(img)
-    underline = 2  # Third color on a three color inky display
-    x = location[0]
-    y = location[1]
-    ly = y
-    right_bound = x + width
-
-    # ID section
-    display_line(img, font, (x, ly), "ⓃⓄ")
-    display_line(img, font, (right_bound - (3 * 8), ly), "{0:03d}".format(mon.id))
-    draw.line((x, ly + 8, right_bound - 2, ly + 8), underline)
-
-    # Height section
-    ly += 8 + 4
-    display_line(img, font, (x, ly), "HT")
-    display_char(img, font, (right_bound - 8, ly), "m")
-    display_char(img, font, (int(right_bound - 2.75 * 8), ly), ".")
-    display_line(img, font, (int(right_bound - 4.5 * 8), ly), "{: >2s}".format(str(mon.height).split(".")[0]))
-    display_line(img, font, (int(right_bound - 2.125 * 8), ly), str(mon.height).split(".")[1])
-    draw.line((x, ly + 8, right_bound - 2, ly + 8), underline)
-
-    # Weight section
-    ly += 8 + 4
-    display_line(img, font, (x, ly), "WT")
-    display_char(img, font, (right_bound - 2 * 8 + 1, ly), "k")
-    display_char(img, font, (right_bound - 8, ly), "g")
-    display_char(img, font, (int(right_bound - 3.5 * 8), ly), ".")
-    display_line(img, font, (int(right_bound - 6.25 * 8), ly), "{: >3s}".format(str(mon.weight).split(".")[0]))
-    display_line(img, font, (int(right_bound - 2.875 * 8), ly), str(mon.weight).split(".")[1])
-    draw.line((x, ly + 8, right_bound - 2, ly + 8), underline)
-
-
 def display_numeric(img: Image.Image, font: Font, location: Tuple[int, int], width: int, mon: Pokemon) -> None:
     """Paste numeric data into display image.
 
@@ -399,28 +343,63 @@ def display_numeric(img: Image.Image, font: Font, location: Tuple[int, int], wid
     temp = font.get_numeral(mon.id)
     final.paste(temp, (x, y), util.create_mask(temp))
     x = 0
-    y += 8
+    y += font.charheight
     draw.line((x, y, width, y), underline)
 
     # Height section
-    y += 4
+    y += line_gap
     temp = font.get_string("HT")
     final.paste(temp, (x, y), util.create_mask(temp))
     temp = font.get_numeral(mon.height, suffix="m")
     x = width - temp.width
     final.paste(temp, (x, y), util.create_mask(temp))
     x = 0
-    y += 8
+    y += font.charheight
     draw.line((x, y, width, y), underline)
 
     # Weight section
-    y += 4
+    y += line_gap
     temp = font.get_string("WT")
     final.paste(temp, (x, y), util.create_mask(temp))
     temp = font.get_numeral(mon.weight, suffix="kg")
     x = width - temp.width
     final.paste(temp, (x, y), util.create_mask(temp))
-    y += 8
+    y += font.charheight
+    draw.line((0, y, width, y), underline)
+
+    img.paste(final, location, util.create_mask(final))
+
+
+def display_taxonomy(img: Image.Image, font: Font, location: Tuple[int, int], width: int, mon: Pokemon) -> None:
+    """Paste taxonomic information into display image.
+
+    Args:
+        img: Display image to paste into
+
+    """
+    underline = 2
+    line_gap = 3
+    height = 2 * font.charheight + 2 * line_gap
+    final = Image.new("P", (width, height))
+    draw = ImageDraw.Draw(final)
+
+    x = 0
+    y = 0
+
+    # Species
+    temp = font.get_string(mon.species.upper())
+    final.paste(temp, (x, y), util.create_mask(temp))
+    y += font.charheight
+    draw.line((0, y, width, y), underline)
+
+    # Classification
+    y += line_gap
+    temp = font.get_string(mon.classification.upper())
+    final.paste(temp, (x, y), util.create_mask(temp))
+    x += font.charwidth * len(mon.classification)
+    temp = font.get_string("①②")
+    final.paste(temp, (x, y), util.create_mask(temp))
+    y += font.charheight
     draw.line((0, y, width, y), underline)
 
     img.paste(final, location, util.create_mask(final))
@@ -461,6 +440,8 @@ if __name__ == "__main__":
     display_sprite(img, (1, 1), mon)
     display_numeric(img, font, (2, 69), 67, mon)
     display_lines(img, font, (71, 23), entry_wrap(random.choice(list(mon.entries.values()))))
+    display_taxonomy(img, font, (71, 1), 122, mon)
+    display_footprint(img, (195, 1), mon)
 
     img = img.rotate(180)
     if en_inky:

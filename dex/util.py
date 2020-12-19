@@ -33,3 +33,19 @@ def create_mask(source: Image.Image, mask: Tuple[int, int, int] = (0, 1, 2)) -> 
             if p in mask:
                 mask_image.putpixel((x, y), 255)
     return mask_image
+
+
+def get_real_bounds(source: Image.Image) -> Tuple[int, int, int, int]:
+    """Calculate non-transparent area of an image.
+
+    Args:
+        source: Image to calculate bounds of
+
+    Returns:
+        4-tuple as (x1, y1, x2, y2)
+
+    """
+    remap = list(range(256))
+    remap[3] = 0
+    remap[0] = 3
+    return source.remap_palette(remap).getbbox()

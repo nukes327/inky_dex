@@ -101,9 +101,11 @@ class Font:
         cw = self.charwidth
         pg = self.pixel_gap
         if prefix is not None:
-            pre_len = sum([cw - pg if letter.islower() else cw for letter in prefix])
+            pre_len = cw * len(prefix)
+        #     pre_len = sum([cw - pg if letter.islower() else cw for letter in prefix])
         if suffix is not None:
-            suff_len = sum([cw - pg if letter.islower() else cw for letter in suffix])
+            suff_len = cw * len(suffix)
+        #     suff_len = sum([cw - pg if letter.islower() else cw for letter in suffix])
 
         # calc final width and generate base image
         final_width = pre_len + suff_len + num_len * cw + 4 * is_float
@@ -113,9 +115,12 @@ class Font:
         offset = final_width
         if suffix is not None:
             for character in suffix[::-1]:
-                offset -= cw - pg * character.islower()
                 temp = self.get_character(character)
+                temp_bb = util.get_real_bounds(temp)
+                temp_w = temp_bb[2] - temp_bb[0]
+                offset -= temp_w + pg
                 out.paste(temp, (offset, 0), util.create_mask(temp))
+            offset += cw - temp_w - 2 * pg
 
         # add float
         if is_float:
@@ -139,8 +144,10 @@ class Font:
         # add prefix
         if prefix is not None:
             for character in prefix[::-1]:
-                offset -= cw - pg * character.islower()
-                temp = self.get_character(character)
+                temp = self.get_character_character()
+                temp_bb = util.get_real_bounds(temp)
+                temp_w = temp_bb[2] - temp_bb[0]
+                offset -= temp_w + pg
                 out.paste(temp, (offset, 0), util.create_mask(temp))
 
         return out
