@@ -15,23 +15,33 @@ Notes:
     Once the image is saved in the assets directory this script can be run to clean
     any images of greenscreen, leaving behind transparency.
 
-WARNING:
-    PIL completely CLOBBERS any tEXt tags that were in the image from a quick test
-    This is potentially a MAJOR issue, more testing needs to be done
-
-Todo:
-    Modify this script so it doesn't clobber tEXt chunks that were added to the image
-
 """
 
 
 from PIL import Image  # type: ignore
 import glob
+import re
+import png  # type: ignore
 
 for sprite in glob.glob("assets/sprites/*.png"):
+    pre_chunk_list = list(png.Reader(sprite).chunks())
     img = Image.open(sprite)
     img.save(sprite, transparency=3, optimize=1)
+    post_chunk_list = list(png.Reader(sprite).chunks())
+    for chunk in pre_chunk_list:
+        if re.compile(b"..Xt").match(chunk[0]):
+            post_chunk_list.insert(2, chunk)
+    with open(sprite, "wb") as out_sprite:
+        png.write_chunks(out_sprite, post_chunk_list)
+
 
 for ui_piece in glob.glob("assets/ui/*.png"):
+    pre_chunk_list = list(png.Reader(ui_piece).chunks())
     img = Image.open(ui_piece)
     img.save(ui_piece, transparency=3, optimize=1)
+    post_chunk_list = list(png.Reader(ui_piece).chunks())
+    for chunk in pre_chunk_list:
+        if re.compile(b"..Xt").match(chunk[0]):
+            post_chunk_list.insert(2, chunk)
+    with open(ui_piece, "wb") as out_ui_piece:
+        png.write_chunks(out_ui_piece, post_chunk_list)
