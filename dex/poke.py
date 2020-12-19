@@ -56,7 +56,7 @@ class Pokemon:
 
     def load_images(self) -> None:
         """Load sprites and footprint from spritesheet."""
-        sprite_sheet = Image.open(f"assets/sprites/{self.id}.png")
+        sprite_sheet = Image.open(f"assets/sprites/{self.id:03d}.png")
         self.sprites.append(sprite_sheet.crop((0, 0, 56, 56)))
         self.sprites.append(sprite_sheet.crop((0, 56, 56, 112)))
         self.footprint = sprite_sheet.crop((0, 112, 16, 128))

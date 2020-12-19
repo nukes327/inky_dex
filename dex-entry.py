@@ -18,6 +18,7 @@ from PIL import Image, ImageDraw  # type: ignore
 from PIL.ImagePalette import ImagePalette  # type: ignore
 from dex.font import Font
 from dex.poke import Pokemon
+import dex.util as util
 import logging
 import logging.config
 import os
@@ -305,7 +306,7 @@ def display_footprint(img: Image, location: Tuple[int, int], mon: Pokemon) -> No
     img.paste(mon.footprint, location, create_mask(mon.footprint))
 
 
-def display_numeric(img: Image, font: Font, location: Tuple[int, int], width: int, mon: Pokemon) -> None:
+def display_numeric_old(img: Image, font: Font, location: Tuple[int, int], width: int, mon: Pokemon) -> None:
     """Paste numeric data into display image.
 
     Args:
@@ -359,6 +360,70 @@ def display_numeric(img: Image, font: Font, location: Tuple[int, int], width: in
     display_line(img, font, (int(right_bound - 6.25 * 8), ly), "{: >3s}".format(str(mon.weight).split(".")[0]))
     display_line(img, font, (int(right_bound - 2.875 * 8), ly), str(mon.weight).split(".")[1])
     draw.line((x, ly + 8, right_bound - 2, ly + 8), underline)
+
+
+def display_numeric(img: Image.Image, font: Font, location: Tuple[int, int], width: int, mon: Pokemon) -> None:
+    """Paste numeric data into display image.
+
+    Args:
+        img:      Display image to be pasted into
+        font:     Fontsheet image
+        location: (x, y) location tuple to paste character
+        width:    How wide the section should be
+        data:     Numeric data to be pasted
+                  Tuple with data in the following order:
+                    ID
+                    Height
+                    Weight
+
+    Notes:
+        X and Y coordinates are the top left of the ID line for numeric data
+        0,0 is the top left of the display
+        Too many digits in height or weight for given width may cause issues
+
+    """
+    # setup for final numeric data image
+    underline = 2
+    line_gap = 4
+    height = 3 * font.charwidth + 2 * line_gap + 1
+    final = Image.new("P", (width, height))
+    draw = ImageDraw.Draw(final)
+
+    x = 0
+    y = 0
+
+    # ID section
+    temp = font.get_string("ⓃⓄ")
+    final.paste(temp, (x, y), util.create_mask(temp))
+    x = width - 3 * font.charwidth
+    temp = font.get_numeral(mon.id)
+    final.paste(temp, (x, y), util.create_mask(temp))
+    x = 0
+    y += 8
+    draw.line((x, y, width, y), underline)
+
+    # Height section
+    y += 4
+    temp = font.get_string("HT")
+    final.paste(temp, (x, y), util.create_mask(temp))
+    temp = font.get_numeral(mon.height, suffix="m")
+    x = width - temp.width
+    final.paste(temp, (x, y), util.create_mask(temp))
+    x = 0
+    y += 8
+    draw.line((x, y, width, y), underline)
+
+    # Weight section
+    y += 4
+    temp = font.get_string("WT")
+    final.paste(temp, (x, y), util.create_mask(temp))
+    temp = font.get_numeral(mon.weight, suffix="kg")
+    x = width - temp.width
+    final.paste(temp, (x, y), util.create_mask(temp))
+    y += 8
+    draw.line((0, y, width, y), underline)
+
+    img.paste(final, location, util.create_mask(final))
 
 
 if __name__ == "__main__":
