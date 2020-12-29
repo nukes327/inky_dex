@@ -1,21 +1,12 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-"""Carry pokemon information and related methods.
+"""Carry pokemon information and related methods."""
 
-Todo:
-    Finish data implementation
-    Determine necessary methods to include
-
-Notes:
-    Should this maybe take a number and init from db?
-
-"""
-
-from typing import Dict, Tuple, List
+from typing import List
 from PIL import Image  # type: ignore
 import logging
-import db.pokeschema as pokeschema
+import db.pokeschema as pokeschema  # type: ignore
 
 
 class Pokemon:
@@ -70,8 +61,7 @@ class Pokemon:
         self.classification = mon.classification
         self.height = mon.height
         self.weight = mon.weight
-        for entry in mon.entries:
-            self.entries.append(entry.entry)
+        self.entries = [entry.entry for entry in mon.entries]
         # self.species = "Magikarp"
         # self.classification = "Fish"
         # self.height = 0.9
@@ -80,4 +70,4 @@ class Pokemon:
         #     "For no reason, it jumps and splashes about, making it "
         #     "easy for predators like Pidgeotto to catch it mid-jump."
         # )
-        # self.entries = {(2, 2): entry}
+        # self.entries = [entry]

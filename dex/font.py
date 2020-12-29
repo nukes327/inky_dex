@@ -151,3 +151,6 @@ class Font:
                 out.paste(temp, (offset, 0), util.create_mask(temp))
 
         return out
+
+    def __repr__(self) -> str:
+        return f"Font(filename='{self.filename}')"

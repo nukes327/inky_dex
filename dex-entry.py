@@ -25,68 +25,6 @@ import os
 import random
 
 
-def get_entry(id: int, gen: int, ver: int) -> str:
-    """Fetch a pokemon's dex entry.
-
-    Args:
-        id:  The national dex id for the pokemon
-        gen: The generation for the entry
-        ver: The version within generation for the entry
-
-    Returns:
-        The dex entry or "flavor" text description for the given pokemon
-
-    Raises:
-        DexError: Pokemon doesn't exist or data not in database
-
-    Notes:
-        The ver argument is probably not the ideal way to handle the multiple
-        entries for each generation but for the time being it may be the best.
-
-    Todo:
-        Actually implement this once a database is in place.
-
-    """
-    entry = (
-        "For no reason, it jumps and splashes about, making it "
-        "easy for predators like Pidgeotto to catch it mid-jump."
-    )
-    return entry
-
-
-def get_data(id: int) -> Tuple[str, str, float, float]:
-    """Fetch a pokemon's dex data.
-
-    Args:
-        id: The national dex id for the pokemon
-
-    Returns:
-        A tuple consisting of:
-            Species
-            Classification
-            Height (Meters)
-            Weight (Kilograms)
-
-    Raises:
-        DexError: Pokemon doesn't exist or data not in database
-
-    Notes:
-        Not sure if there's much reason to keep this separate
-        from get_entry, may combine the two later.
-        Height and Weight are metric purely because it makes
-        it easier to fit the numbers on the small PHAT display.
-
-    Todo:
-        As per get_entry, implement once database exists.
-
-    """
-    species = "Magikarp"
-    classification = "Fish"
-    height = 0.9
-    weight = 10.0
-    return (species, classification, height, weight)
-
-
 def gsc_format(entry: str) -> str:
     """Replace character patterns with unique characters to work with gscfont.
 
@@ -439,7 +377,7 @@ if __name__ == "__main__":
 
     display_sprite(img, (1, 1), mon)
     display_numeric(img, font, (2, 69), 67, mon)
-    display_lines(img, font, (71, 23), entry_wrap(random.choice(list(mon.entries.values()))))
+    display_lines(img, font, (71, 23), entry_wrap(random.choice(mon.entries)))
     display_taxonomy(img, font, (71, 1), 122, mon)
     display_footprint(img, (195, 1), mon)
 

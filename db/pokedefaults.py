@@ -6,7 +6,7 @@
 import pokeschema
 
 
-def add_types(session):
+def add_types(session) -> None:
     session.add_all(
         [
             pokeschema.Type(type="normal"),
@@ -31,7 +31,7 @@ def add_types(session):
     )
 
 
-def add_egg_groups(session):
+def add_egg_groups(session) -> None:
     session.add_all(
         [
             pokeschema.EggGroup(group="monster"),
@@ -53,17 +53,17 @@ def add_egg_groups(session):
     )
 
 
-def add_damage_categories(session):
+def add_damage_categories(session) -> None:
     session.add_all(
         [
-            pokeschema.DamageCategory(category="phsyical"),
+            pokeschema.DamageCategory(category="physical"),
             pokeschema.DamageCategory(category="special"),
             pokeschema.DamageCategory(category="status"),
         ]
     )
 
 
-def add_obtain_methods(session):
+def add_obtain_methods(session) -> None:
     session.add_all(
         [
             pokeschema.ObtainMethod(method="catch"),
@@ -73,11 +73,12 @@ def add_obtain_methods(session):
             pokeschema.ObtainMethod(method="gift"),
             pokeschema.ObtainMethod(method="hatch"),
             pokeschema.ObtainMethod(method="evolve"),
+            pokeschema.ObtainMethod(method="find"),
         ]
     )
 
 
-def add_evo_triggers(session):
+def add_evo_triggers(session) -> None:
     session.add_all(
         [
             pokeschema.EvoTrigger(trigger="level"),
@@ -87,7 +88,7 @@ def add_evo_triggers(session):
     )
 
 
-def add_learn_methods(session):
+def add_learn_methods(session) -> None:
     session.add_all(
         [
             pokeschema.LearnMethod(method="level"),
@@ -99,8 +100,8 @@ def add_learn_methods(session):
 
 
 if __name__ == "__main__":
-    from sqlalchemy import create_engine
-    from sqlalchemy.orm import sessionmaker
+    from sqlalchemy import create_engine  # type: ignore
+    from sqlalchemy.orm import sessionmaker  # type: ignore
 
     engine = create_engine("sqlite:///poke.db", echo=True)
     Session = sessionmaker(bind=engine)
